@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AgoraUIKit, { PropsInterface, layout } from "agora-react-uikit";
 
 const IntractiveLive = () => {
@@ -10,10 +10,10 @@ const IntractiveLive = () => {
   const props = {
     rtcProps: {
       appId: "b1010079b6b941c48ef2897e61cd4277",
-      channel: 'test',
+      channel: "test",
       role: isHost ? "host" : "audience",
-      layout: isPinned ? layout.pin : layout.grid,
-      token: '007eJxTYNA9WHH0wq6Tk0rPpvs7/DvA+mhn2jW2l23Z+6L18ozOr1qowJBkaGBoYGBumWSWZGlimGxikZpmZGFpnmpmmJxiYmRuHrdzWnJDICPDug4FBkYoBPFZGEpSi0sYGADrYyEN',
+      token:
+        "007eJxTYNA9WHH0wq6Tk0rPpvs7/DvA+mhn2jW2l23Z+6L18ozOr1qowJBkaGBoYGBumWSWZGlimGxikZpmZGFpnmpmmJxiYmRuHrdzWnJDICPDug4FBkYoBPFZGEpSi0sYGADrYyEN",
     },
     callbacks: {
       EndCall: () => setVideocall(false),
@@ -22,6 +22,10 @@ const IntractiveLive = () => {
       localBtnContainer: { backgroundColor: "blueviolet" },
     },
   };
+
+  useEffect(() => {
+    console.log(props ,'skdkdkdk');
+  }, [isHost]);
   return (
     <div style={styles.container}>
       {videocall ? (
@@ -33,7 +37,6 @@ const IntractiveLive = () => {
             <p style={styles.btn} onClick={() => setHost(!isHost)}>
               Change Role
             </p>
-           
           </div>
           <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
             <AgoraUIKit
