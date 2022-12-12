@@ -3,10 +3,12 @@ import AgoraUIKit from "agora-react-uikit";
 import AgoraRTC from "agora-rtc-sdk-ng";
 const FirstApp = () => {
   const [videoCall, setVideoCall] = useState(false);
+  const [tokenInp, setTokenInp]=useState('')
+  const [channelInp, setChannelInp]=useState('')
   const rtcProps = {
     appId: "b1010079b6b941c48ef2897e61cd4277",
-    channel: "newChannel", // your agora channel
-    token: "007eJxTYPi//O/8CYqGvC/1f3suPL17mabY/+I+13unezbNsvp5Q1FVgSHJ0MDQwMDcMsksydLEMNnEIjXNyMLSPNXMMDnFxMjcPE1/cnJDICODtshSJkYGCATxuRjyUsudMxLz8lJzGBgAlaoiTg==", // use null or skip if using app in testing mode
+    channel: channelInp, // your agora channel
+    token: tokenInp
   };
   const callbacks = {
     EndCall: () => setVideoCall(false),
@@ -19,7 +21,12 @@ const FirstApp = () => {
               <AgoraUIKit rtcProps={rtcProps} callbacks={callbacks} />
             </div>
           ) : (
-            <h3 onClick={() => setVideoCall(true)}>Start Call</h3>
+            <>
+            <input  type='text' onChange={(e)=>setChannelInp(e.target.value)} placeholder='channel name'/><br/><br/>
+            <input  type='text' onChange={(e)=>setTokenInp(e.target.value)} placeholder='toekn'/><br/><br/>
+            <button onClick={() => setVideoCall(true)}>Start Call</button>
+            
+            </>
           )
      }
     </div>
