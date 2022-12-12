@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AgoraUIKit, { PropsInterface, layout } from "agora-react-uikit";
-
-const IntractiveLive = () => {
+import AgoraRTC from "agora-rtc-sdk-ng";
+const IntractiveLive = ({ appId, channele, token }) => {
   const [videocall, setVideocall] = useState(false);
   const [isHost, setHost] = useState(false);
   const [isPinned, setPinned] = useState(false);
@@ -9,11 +9,10 @@ const IntractiveLive = () => {
   const [channelInp, setChannelInp] = useState("");
   const props = {
     rtcProps: {
-      appId: "b1010079b6b941c48ef2897e61cd4277",
-      channel: "test",
+      appId: appId,
+      channel: channele,
       role: isHost ? "host" : "audience",
-      token:
-        "007eJxTYNA9WHH0wq6Tk0rPpvs7/DvA+mhn2jW2l23Z+6L18ozOr1qowJBkaGBoYGBumWSWZGlimGxikZpmZGFpnmpmmJxiYmRuHrdzWnJDICPDug4FBkYoBPFZGEpSi0sYGADrYyEN",
+      token: token,
     },
     callbacks: {
       EndCall: () => setVideocall(false),
@@ -23,9 +22,23 @@ const IntractiveLive = () => {
     },
   };
 
-  useEffect(() => {
-    console.log(props ,'skdkdkdk');
-  }, [isHost]);
+  const handleCliendData = async () => {
+    const client = AgoraRTC.createClient({ mode: "live", codec: "vp8" });
+
+    try {
+  
+      const uid = await client.join(appId, channele, token, uid);
+      await client.login({uid, token})
+      console.log("join success");
+    } catch (e) {
+      console.log("join failed", e);
+    }
+  };
+  useEffect( () => {
+    if (videocall) {
+      handleCliendData();
+    }
+  }, [isHost,videocall]);
   return (
     <div style={styles.container}>
       {videocall ? (
