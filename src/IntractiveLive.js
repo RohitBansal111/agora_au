@@ -1,46 +1,50 @@
 import React, { useState } from "react";
-import AgoraUIKit from "agora-react-uikit";
-import AgoraRTC from "agora-rtc-sdk-ng";
+import AgoraUIKit, { PropsInterface, layout } from "agora-react-uikit";
 
 const IntractiveLive = () => {
-  const [videoCall, setVideoCall] = useState(false);
+  const [videocall, setVideocall] = useState(false);
+  const [isHost, setHost] = useState(false);
+  const [isPinned, setPinned] = useState(false);
   const [tokenInp, setTokenInp] = useState("");
   const [channelInp, setChannelInp] = useState("");
-  let appId = "b1010079b6b941c48ef2897e61cd4277";
-
-  ///// create client
-  const client = AgoraRTC.createClient({ mode: "live", codec: "vp8" });
-  client.init(appId, () => {
-    client.join(
-      tokenInp,
-      channelInp,
-      null,
-      (uid) => {
-        console.log("join success", uid);
-      },
-      (e) => {
-        console.log("join failed", e);
-      }
-    );
-  });
-
-  //create audio vedio stram
-  const localStream = AgoraRTC.createStream({ audio: true, video: true });
-  localStream.init(
-    () => {
-      console.log("init stream success");
-      localStream.play("DOM_ELEMENT_ID", { muted: true });
+  const props = {
+    rtcProps: {
+      appId: "b1010079b6b941c48ef2897e61cd4277",
+      channel: channelInp,
+      role: isHost ? "host" : "audience",
+      layout: isPinned ? layout.pin : layout.grid,
+      token: tokenInp,
     },
-    (e) => {
-      console.log("init local stream failed", e);
-    }
-  );
+    callbacks: {
+      EndCall: () => setVideocall(false),
+    },
+    styleProps: {
+      localBtnContainer: { backgroundColor: "blueviolet" },
+    },
+  };
   return (
-    <div>
-      {videoCall ? (
-        <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
-          <AgoraUIKit rtcProps={rtcProps} callbacks={callbacks} />
-        </div>
+    <div style={styles.container}>
+      {videocall ? (
+        <>
+          <div style={styles.nav}>
+            <p style={{ fontSize: 20, width: 200 }}>
+              You're {isHost ? "a host" : "an audience"}
+            </p>
+            <p style={styles.btn} onClick={() => setHost(!isHost)}>
+              Change Role
+            </p>
+            <p style={styles.btn} onClick={() => setPinned(!isPinned)}>
+              Change Layout
+            </p>
+          </div>
+          <div style={{ display: "flex", width: "100vw", height: "100vh" }}>
+            <AgoraUIKit
+              rtcProps={props.rtcProps}
+              callbacks={props.callbacks}
+              styleProps={props.styleProps}
+            />
+          </div>
+        </>
       ) : (
         <>
           <input
@@ -57,11 +61,32 @@ const IntractiveLive = () => {
           />
           <br />
           <br />
-          <button onClick={() => setVideoCall(true)}>Start Call</button>
+          <h3 style={styles.btn} onClick={() => setVideocall(true)}>
+            Start Call
+          </h3>
         </>
       )}
     </div>
   );
+};
+
+const styles = {
+  container: {
+    width: "100vw",
+    height: "100vh",
+    backgroundColor: "#007bff22",
+  },
+  heading: { textAlign: "center", marginBottom: 0 },
+  videoContainer: { display: "flex", flexDirection: "column", flex: 1 },
+  nav: { display: "flex", justifyContent: "space-around" },
+  btn: {
+    backgroundColor: "#007bff",
+    cursor: "pointer",
+    borderRadius: 5,
+    padding: 5,
+    color: "#ffffff",
+    fontSize: 20,
+  },
 };
 
 export default IntractiveLive;
